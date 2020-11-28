@@ -40,5 +40,30 @@ namespace ParkingLotApiTest.ControllerTest
             // then
             Assert.Equal(orderCreateDto.OrderNumber, returnOrders[0].OrderNumber);
         }
+
+        [Fact]
+        public async Task Should_Get_Order_By_Number()
+        {
+            // given
+            var client = GetClient();
+            var orderCreateDto = new OrderCreateDto()
+            {
+                OrderNumber = Guid.NewGuid().ToString(),
+                ParkingLotName = "parkinglot1",
+                PlateNumber = "abc123",
+                Status = OrderCreateDto.OrderStatus.Open,
+            };
+            var httpContent = JsonConvert.SerializeObject(orderCreateDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            await client.PostAsync("/orders", content);
+
+            var orderResponse = await client.GetAsync($"/orders/{orderCreateDto.OrderNumber}");
+            var body = await orderResponse.Content.ReadAsStringAsync();
+
+            var returnOrder = JsonConvert.DeserializeObject<OrderFullDto>(body);
+            // then
+            Assert.Equal(orderCreateDto.OrderNumber, returnOrder.OrderNumber);
+        }
     }
 }

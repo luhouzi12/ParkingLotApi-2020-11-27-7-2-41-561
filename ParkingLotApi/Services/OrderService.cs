@@ -37,5 +37,21 @@ namespace ParkingLotApi.Services
             var foundOrderEntity = await parkingLotContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == number);
             return new OrderFullDto(foundOrderEntity);
         }
+
+        public async Task<OrderFullDto> UpdateOrderCloseTime(string number)
+        {
+            var foundOrderEntity = await parkingLotContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == number);
+            foundOrderEntity.CloseTime = DateTime.Now;
+            await parkingLotContext.SaveChangesAsync();
+            return new OrderFullDto(foundOrderEntity);
+        }
+
+        public async Task<OrderFullDto> CloseOrder(string number)
+        {
+            var foundOrderEntity = await parkingLotContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == number);
+            foundOrderEntity.Status = OrderEntity.OrderStatus.Close;
+            await parkingLotContext.SaveChangesAsync();
+            return new OrderFullDto(foundOrderEntity);
+        }
     }
 }
