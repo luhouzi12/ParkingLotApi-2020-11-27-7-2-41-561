@@ -28,6 +28,10 @@ namespace ParkingLotApi.Services
         {
             OrderEntity orderEntity = new OrderEntity(orderCreateDto);
             await parkingLotContext.Orders.AddAsync(orderEntity);
+            var foundParkingLot =
+                await parkingLotContext.ParkingLots.FirstOrDefaultAsync(parkingLot =>
+                    parkingLot.Name == orderCreateDto.ParkingLotName);
+            foundParkingLot.Orders.Add(orderEntity);
             await parkingLotContext.SaveChangesAsync();
             return orderCreateDto.OrderNumber;
         }
@@ -46,10 +50,22 @@ namespace ParkingLotApi.Services
             return new OrderFullDto(foundOrderEntity);
         }
 
+        public async Task<bool> CanPark(string parkingLotName)
+        {
+            var foundParkingLot =
+                await parkingLotContext.ParkingLots.FirstOrDefaultAsync(parkingLot =>
+                    parkingLot.Name == parkingLotName);
+            return foundParkingLot.Orders.Count < foundParkingLot.Capacity;
+        }
+
         public async Task<OrderFullDto> CloseOrder(string number)
         {
             var foundOrderEntity = await parkingLotContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == number);
             foundOrderEntity.Status = OrderEntity.OrderStatus.Close;
+            var foundParkingLot =
+                await parkingLotContext.ParkingLots.FirstOrDefaultAsync(parkingLot =>
+                    parkingLot.Name == foundOrderEntity.ParkingLotName);
+            foundParkingLot.Orders.Remove(foundOrderEntity);
             await parkingLotContext.SaveChangesAsync();
             return new OrderFullDto(foundOrderEntity);
         }

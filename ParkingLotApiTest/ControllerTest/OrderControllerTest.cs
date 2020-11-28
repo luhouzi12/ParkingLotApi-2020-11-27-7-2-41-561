@@ -22,6 +22,17 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "parkinglot1",
+                Capacity = 5,
+                Location = "Beijing",
+            };
+
+            var parkingLotContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent parkingLotcontent = new StringContent(parkingLotContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
                 OrderNumber = Guid.NewGuid().ToString(),
@@ -31,7 +42,7 @@ namespace ParkingLotApiTest.ControllerTest
             };
             var httpContent = JsonConvert.SerializeObject(orderCreateDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            // when
+
             await client.PostAsync("/orders", content);
             var allOrdersResponse = await client.GetAsync("/orders");
             var body = await allOrdersResponse.Content.ReadAsStringAsync();
@@ -46,6 +57,17 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "parkinglot1",
+                Capacity = 5,
+                Location = "Beijing",
+            };
+
+            var parkingLotContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent parkingLotcontent = new StringContent(parkingLotContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
                 OrderNumber = Guid.NewGuid().ToString(),
@@ -71,6 +93,17 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "parkinglot1",
+                Capacity = 5,
+                Location = "Beijing",
+            };
+
+            var parkingLotContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent parkingLotcontent = new StringContent(parkingLotContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
                 OrderNumber = Guid.NewGuid().ToString(),
@@ -97,6 +130,39 @@ namespace ParkingLotApiTest.ControllerTest
             var returnOrder = JsonConvert.DeserializeObject<OrderFullDto>(body);
             // then
             Assert.Equal(OrderFullDto.OrderStatus.Close, returnOrder.Status);
+        }
+
+        [Fact]
+        public async Task Should_Return_Error_Message_When_Parking_Lot_Is_Full()
+        {
+            // given
+            var client = GetClient();
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "parkinglot1",
+                Capacity = 0,
+                Location = "Beijing",
+            };
+
+            var parkingLotContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent parkingLotcontent = new StringContent(parkingLotContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            await client.PostAsync("/parkinglots", parkingLotcontent);
+            var orderCreateDto = new OrderCreateDto()
+            {
+                OrderNumber = Guid.NewGuid().ToString(),
+                ParkingLotName = "parkinglot1",
+                PlateNumber = "abc123",
+                Status = OrderCreateDto.OrderStatus.Open,
+            };
+            var httpContent = JsonConvert.SerializeObject(orderCreateDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            var postResponse = await client.PostAsync("/orders", content);
+
+            var body = await postResponse.Content.ReadAsStringAsync();
+            // then
+            Assert.Equal("The parking lot is full", body);
         }
     }
 }

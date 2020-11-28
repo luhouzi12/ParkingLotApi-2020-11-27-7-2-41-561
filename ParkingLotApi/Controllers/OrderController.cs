@@ -34,10 +34,15 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderCreateDto>> CreateOrder(OrderCreateDto orderDto)
+        public async Task<ActionResult<OrderCreateDto>> CreateOrder(OrderCreateDto orderCreateDto)
         {
-            var number = await orderService.AddOrder(orderDto);
-            return CreatedAtAction(nameof(GetByNumber), new { number = number }, orderDto);
+            if (!await orderService.CanPark(orderCreateDto.ParkingLotName))
+            {
+                return BadRequest("The parking lot is full");
+            }
+
+            var number = await orderService.AddOrder(orderCreateDto);
+            return CreatedAtAction(nameof(GetByNumber), new { number = number }, orderCreateDto);
         }
 
         [HttpPatch("{orderPatchDto.OrderNumber}")]
