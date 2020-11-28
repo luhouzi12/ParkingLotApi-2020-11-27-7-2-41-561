@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Entities;
 using ParkingLotApi.Repository;
@@ -45,6 +46,17 @@ namespace ParkingLotApi.Services
                 parkingLotContext.ParkingLots.FirstOrDefaultAsync(parkingLot => parkingLot.Name == name);
             parkingLotContext.ParkingLots.Remove(foundParkingLotEntity);
             await parkingLotContext.SaveChangesAsync();
+        }
+
+        public async Task<List<ParkingLotDto>> GetParkingLotsByRange(int startindex, int endindex)
+        {
+            var parkingLotsList = await parkingLotContext.ParkingLots.ToListAsync();
+            var foundParkingLotEntities =
+                parkingLotsList.Where(parkingLot =>
+                    parkingLotsList.IndexOf(parkingLot) < endindex &&
+                    parkingLotsList.IndexOf(parkingLot) >= startindex)
+                    .ToList();
+            return foundParkingLotEntities.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
         }
     }
 }

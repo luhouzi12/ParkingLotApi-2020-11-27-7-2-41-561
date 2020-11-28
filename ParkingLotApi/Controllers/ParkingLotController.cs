@@ -46,5 +46,13 @@ namespace ParkingLotApi.Controllers
             await parkingLotService.DeleteParkingLot(name);
             return NoContent();
         }
+
+        [HttpGet("page/{page}")]
+        public async Task<ActionResult<IEnumerable<ParkingLotDto>>> ShowSelectedPage(int page)
+        {
+            int pageSize = 15;
+            var foundParkingLots = await parkingLotService.GetParkingLotsByRange(pageSize * (page - 1), pageSize * page);
+            return Ok(foundParkingLots);
+        }
     }
 }
