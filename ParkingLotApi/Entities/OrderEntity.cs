@@ -13,13 +13,12 @@ namespace ParkingLotApi.Entities
         {
         }
 
-        public OrderEntity(OrderDto orderDto)
+        public OrderEntity(OrderCreateDto orderDto)
         {
             OrderNumber = orderDto.OrderNumber;
             ParkingLotName = orderDto.ParkingLotName;
             PlateNumber = orderDto.PlateNumber;
-            CreationTime = orderDto.CreationTime;
-            CloseTime = orderDto.CloseTime;
+            CreationTime = DateTime.Now;
             Status = (OrderStatus)orderDto.Status;
         }
 
@@ -30,7 +29,7 @@ namespace ParkingLotApi.Entities
         }
 
         [Key]
-        public string OrderNumber { get; set; } = Guid.NewGuid().ToString();
+        public string OrderNumber { get; set; }
         public string ParkingLotName { get; set; }
         public string PlateNumber { get; set; }
         public DateTime CreationTime { get; set; }

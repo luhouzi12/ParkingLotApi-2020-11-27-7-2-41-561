@@ -35,8 +35,8 @@ namespace ParkingLotApiTest.ControllerTest
             // when
             await client.PostAsync("/parkinglots", content);
 
-            var allCompaniesResponse = await client.GetAsync("/parkinglots");
-            var body = await allCompaniesResponse.Content.ReadAsStringAsync();
+            var allParkingLotsResponse = await client.GetAsync("/parkinglots");
+            var body = await allParkingLotsResponse.Content.ReadAsStringAsync();
 
             var returnParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
             // then

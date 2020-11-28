@@ -6,19 +6,18 @@ using ParkingLotApi.Entities;
 
 namespace ParkingLotApi.Dtos
 {
-    public class OrderDto
+    public class OrderCreateDto
     {
-        public OrderDto()
+        public OrderCreateDto()
         {
         }
 
-        public OrderDto(OrderEntity orderEntity)
+        public OrderCreateDto(OrderEntity orderEntity)
         {
             OrderNumber = orderEntity.OrderNumber;
             ParkingLotName = orderEntity.ParkingLotName;
             PlateNumber = orderEntity.PlateNumber;
             CreationTime = orderEntity.CreationTime;
-            CloseTime = orderEntity.CloseTime;
             Status = (OrderStatus)orderEntity.Status;
         }
 
@@ -32,7 +31,6 @@ namespace ParkingLotApi.Dtos
         public string ParkingLotName { get; set; }
         public string PlateNumber { get; set; }
         public DateTime CreationTime { get; set; }
-        public DateTime CloseTime { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Open;
     }
 }

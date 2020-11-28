@@ -20,24 +20,24 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<OrderCreateDto>>> GetAll()
         {
             var allOrderDtos = await orderService.GetAllOrders();
             return Ok(allOrderDtos);
         }
 
         [HttpGet("{number}")]
-        public async Task<ActionResult<ParkingLotDto>> GetByNumber(string number)
+        public async Task<ActionResult<OrderFullDto>> GetByNumber(string number)
         {
-            var parkingLotDto = await orderService.GetOrderByNumber(number);
-            return Ok(parkingLotDto);
+            var orderFullDto = await orderService.GetOrderByNumber(number);
+            return Ok(orderFullDto);
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderDto>> AddOrder(OrderDto orderDto)
+        public async Task<ActionResult<OrderCreateDto>> CreateOrder(OrderCreateDto orderDto)
         {
             var number = await orderService.AddOrder(orderDto);
-            return CreatedAtAction(nameof(GetByNumber), new {number = number}, orderDto);
+            return CreatedAtAction(nameof(GetByNumber), new { number = number }, orderDto);
         }
     }
 }

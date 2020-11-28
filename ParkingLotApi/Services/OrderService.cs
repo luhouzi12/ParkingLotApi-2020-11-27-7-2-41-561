@@ -18,24 +18,24 @@ namespace ParkingLotApi.Services
             this.parkingLotContext = parkingLotContext;
         }
 
-        public async Task<List<OrderDto>> GetAllOrders()
+        public async Task<List<OrderFullDto>> GetAllOrders()
         {
             var allOrders = await parkingLotContext.Orders.ToListAsync();
-            return allOrders.Select(orderEntity => new OrderDto(orderEntity)).ToList();
+            return allOrders.Select(orderEntity => new OrderFullDto(orderEntity)).ToList();
         }
 
-        public async Task<string> AddOrder(OrderDto orderDto)
+        public async Task<string> AddOrder(OrderCreateDto orderCreateDto)
         {
-            OrderEntity orderEntity = new OrderEntity(orderDto);
+            OrderEntity orderEntity = new OrderEntity(orderCreateDto);
             await parkingLotContext.Orders.AddAsync(orderEntity);
             await parkingLotContext.SaveChangesAsync();
-            return orderDto.OrderNumber;
+            return orderCreateDto.OrderNumber;
         }
 
-        public async Task<OrderDto> GetOrderByNumber(string number)
+        public async Task<OrderFullDto> GetOrderByNumber(string number)
         {
             var foundOrderEntity = await parkingLotContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == number);
-            return new OrderDto(foundOrderEntity);
+            return new OrderFullDto(foundOrderEntity);
         }
     }
 }
