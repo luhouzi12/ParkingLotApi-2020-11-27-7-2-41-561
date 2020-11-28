@@ -58,5 +58,15 @@ namespace ParkingLotApi.Services
                     .ToList();
             return foundParkingLotEntities.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
         }
+
+        public async Task<ParkingLotDto> UpdateCapacity(UpdatingCapacityDto updatingCapacityDto)
+        {
+            var foundParkingLot =
+                await parkingLotContext.ParkingLots.FirstOrDefaultAsync(parkinglot =>
+                    parkinglot.Name == updatingCapacityDto.Name);
+            foundParkingLot.Capacity = updatingCapacityDto.Capacity;
+            await parkingLotContext.SaveChangesAsync();
+            return new ParkingLotDto(foundParkingLot);
+        }
     }
 }
