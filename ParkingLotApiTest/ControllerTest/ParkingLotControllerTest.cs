@@ -10,6 +10,7 @@ using Xunit;
 
 namespace ParkingLotApiTest.ControllerTest
 {
+    [Collection("IntegrationTest")]
     public class ParkingLotControllerTest : TestBase
     {
         public ParkingLotControllerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
