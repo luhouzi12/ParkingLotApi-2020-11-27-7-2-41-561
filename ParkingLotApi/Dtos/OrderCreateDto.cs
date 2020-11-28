@@ -17,7 +17,6 @@ namespace ParkingLotApi.Dtos
             OrderNumber = orderEntity.OrderNumber;
             ParkingLotName = orderEntity.ParkingLotName;
             PlateNumber = orderEntity.PlateNumber;
-            CreationTime = orderEntity.CreationTime;
             Status = (OrderStatus)orderEntity.Status;
         }
 
@@ -30,7 +29,6 @@ namespace ParkingLotApi.Dtos
         public string OrderNumber { get; set; } = Guid.NewGuid().ToString();
         public string ParkingLotName { get; set; }
         public string PlateNumber { get; set; }
-        public DateTime CreationTime { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Open;
     }
 }

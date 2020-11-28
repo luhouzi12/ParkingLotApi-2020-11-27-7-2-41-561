@@ -65,5 +65,38 @@ namespace ParkingLotApiTest.ControllerTest
             // then
             Assert.Equal(orderCreateDto.OrderNumber, returnOrder.OrderNumber);
         }
+
+        [Fact]
+        public async Task Should_Patch_Order_When_Car_Leaves()
+        {
+            // given
+            var client = GetClient();
+            var orderCreateDto = new OrderCreateDto()
+            {
+                OrderNumber = Guid.NewGuid().ToString(),
+                ParkingLotName = "parkinglot1",
+                PlateNumber = "abc123",
+                Status = OrderCreateDto.OrderStatus.Open,
+            };
+            var httpContent = JsonConvert.SerializeObject(orderCreateDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var orderPatchDto = new OrderPatchDto()
+            {
+                OrderNumber = orderCreateDto.OrderNumber,
+            };
+            var patchContent = JsonConvert.SerializeObject(orderPatchDto);
+            StringContent content2 = new StringContent(patchContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            // when
+            await client.PostAsync("/orders", content);
+            await client.PatchAsync($"/orders/{orderCreateDto.OrderNumber}", content2);
+
+            var orderResponse = await client.GetAsync($"/orders/{orderCreateDto.OrderNumber}");
+            var body = await orderResponse.Content.ReadAsStringAsync();
+
+            var returnOrder = JsonConvert.DeserializeObject<OrderFullDto>(body);
+            // then
+            Assert.Equal(OrderFullDto.OrderStatus.Close, returnOrder.Status);
+        }
     }
 }

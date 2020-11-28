@@ -40,12 +40,12 @@ namespace ParkingLotApi.Controllers
             return CreatedAtAction(nameof(GetByNumber), new { number = number }, orderDto);
         }
 
-        [HttpPatch("{number}")]
-        public async Task<ActionResult<OrderFullDto>> CarLeave(string number)
+        [HttpPatch("{orderPatchDto.OrderNumber}")]
+        public async Task<ActionResult<OrderFullDto>> CarLeave(OrderPatchDto orderPatchDto)
         {
-            await orderService.UpdateOrderCloseTime(number);
-            await orderService.CloseOrder(number);
-            return Ok(await GetByNumber(number));
+            await orderService.UpdateOrderCloseTime(orderPatchDto.OrderNumber);
+            await orderService.CloseOrder(orderPatchDto.OrderNumber);
+            return Ok(await GetByNumber(orderPatchDto.OrderNumber));
         }
     }
 }
