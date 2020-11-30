@@ -28,7 +28,7 @@ namespace ParkingLotApi.Dtos
             Open
         }
 
-        public string OrderNumber { get; set; } = Guid.NewGuid().ToString();
+        public string OrderNumber { get; set; }
         public string ParkingLotName { get; set; }
         public string PlateNumber { get; set; }
         public DateTime CreationTime { get; set; }

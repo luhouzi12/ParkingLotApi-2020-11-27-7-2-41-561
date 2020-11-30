@@ -55,7 +55,7 @@ namespace ParkingLotApi.Controllers
             return Ok(foundParkingLots);
         }
 
-        [HttpPatch("{updatingCapacity.Name}")]
+        [HttpPatch("{name}")]
         public async Task<ActionResult<ParkingLotDto>> UpdateCapacity(UpdatingCapacityDto updatingCapacityDto)
         {
             var parkingLotDto = await parkingLotService.UpdateCapacity(updatingCapacityDto);
