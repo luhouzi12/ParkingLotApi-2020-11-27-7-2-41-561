@@ -12,23 +12,13 @@ namespace ParkingLotApi.Dtos
         {
         }
 
-        public OrderCreateDto(OrderEntity orderEntity)
-        {
-            OrderNumber = orderEntity.OrderNumber;
-            ParkingLotName = orderEntity.ParkingLotName;
-            PlateNumber = orderEntity.PlateNumber;
-            Status = (OrderStatus)orderEntity.Status;
-        }
-
         public enum OrderStatus
         {
             Close,
             Open
         }
 
-        public string OrderNumber { get; set; } = Guid.NewGuid().ToString();
         public string ParkingLotName { get; set; }
         public string PlateNumber { get; set; }
-        public OrderStatus Status { get; set; } = OrderStatus.Open;
     }
 }

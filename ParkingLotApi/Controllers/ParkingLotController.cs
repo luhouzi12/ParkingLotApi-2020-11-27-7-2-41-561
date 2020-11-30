@@ -37,7 +37,7 @@ namespace ParkingLotApi.Controllers
         public async Task<ActionResult<ParkingLotDto>> Add(ParkingLotDto parkingLotDto)
         {
             var name = await parkingLotService.AddParkingLot(parkingLotDto);
-            return CreatedAtAction(nameof(GetByName), new { name = name }, parkingLotDto);
+            return CreatedAtAction(nameof(GetByName), new { name }, parkingLotDto);
         }
 
         [HttpDelete("{name}")]

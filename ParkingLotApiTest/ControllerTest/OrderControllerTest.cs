@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 
 namespace ParkingLotApiTest.ControllerTest
 {
+    [Collection("IntegrationTest")]
     public class OrderControllerTest : TestBase
     {
         public OrderControllerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
@@ -35,21 +36,20 @@ namespace ParkingLotApiTest.ControllerTest
             await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
-                OrderNumber = Guid.NewGuid().ToString(),
                 ParkingLotName = "parkinglot1",
                 PlateNumber = "abc123",
-                Status = OrderCreateDto.OrderStatus.Open,
             };
             var httpContent = JsonConvert.SerializeObject(orderCreateDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            await client.PostAsync("/orders", content);
+            var postResponse = await client.PostAsync("/orders", content);
+            var responseBody = await postResponse.Content.ReadAsStringAsync();
             var allOrdersResponse = await client.GetAsync("/orders");
             var body = await allOrdersResponse.Content.ReadAsStringAsync();
 
             var returnOrders = JsonConvert.DeserializeObject<List<OrderFullDto>>(body);
             // then
-            Assert.Equal(orderCreateDto.OrderNumber, returnOrders[0].OrderNumber);
+            Assert.Equal(responseBody, returnOrders[0].OrderNumber);
         }
 
         [Fact]
@@ -70,22 +70,21 @@ namespace ParkingLotApiTest.ControllerTest
             await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
-                OrderNumber = Guid.NewGuid().ToString(),
                 ParkingLotName = "parkinglot1",
                 PlateNumber = "abc123",
-                Status = OrderCreateDto.OrderStatus.Open,
             };
             var httpContent = JsonConvert.SerializeObject(orderCreateDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
             // when
-            await client.PostAsync("/orders", content);
+            var postResponse = await client.PostAsync("/orders", content);
+            var responseBody = await postResponse.Content.ReadAsStringAsync();
 
-            var orderResponse = await client.GetAsync($"/orders/{orderCreateDto.OrderNumber}");
+            var orderResponse = await client.GetAsync($"/orders/{responseBody}");
             var body = await orderResponse.Content.ReadAsStringAsync();
 
             var returnOrder = JsonConvert.DeserializeObject<OrderFullDto>(body);
             // then
-            Assert.Equal(orderCreateDto.OrderNumber, returnOrder.OrderNumber);
+            Assert.Equal(responseBody, returnOrder.OrderNumber);
         }
 
         [Fact]
@@ -106,25 +105,26 @@ namespace ParkingLotApiTest.ControllerTest
             await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
-                OrderNumber = Guid.NewGuid().ToString(),
                 ParkingLotName = "parkinglot1",
                 PlateNumber = "abc123",
-                Status = OrderCreateDto.OrderStatus.Open,
             };
             var httpContent = JsonConvert.SerializeObject(orderCreateDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            // when
+            var postResponse = await client.PostAsync("/orders", content);
+            var responseBody = await postResponse.Content.ReadAsStringAsync();
+
             var orderPatchDto = new OrderPatchDto()
             {
-                OrderNumber = orderCreateDto.OrderNumber,
+                OrderNumber = responseBody,
             };
             var patchContent = JsonConvert.SerializeObject(orderPatchDto);
             StringContent content2 = new StringContent(patchContent, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            // when
-            await client.PostAsync("/orders", content);
-            await client.PatchAsync($"/orders/{orderCreateDto.OrderNumber}", content2);
+            await client.PatchAsync($"/orders/{responseBody}", content2);
 
-            var orderResponse = await client.GetAsync($"/orders/{orderCreateDto.OrderNumber}");
+            var orderResponse = await client.GetAsync($"/orders/{responseBody}");
             var body = await orderResponse.Content.ReadAsStringAsync();
 
             var returnOrder = JsonConvert.DeserializeObject<OrderFullDto>(body);
@@ -150,10 +150,8 @@ namespace ParkingLotApiTest.ControllerTest
             await client.PostAsync("/parkinglots", parkingLotcontent);
             var orderCreateDto = new OrderCreateDto()
             {
-                OrderNumber = Guid.NewGuid().ToString(),
                 ParkingLotName = "parkinglot1",
                 PlateNumber = "abc123",
-                Status = OrderCreateDto.OrderStatus.Open,
             };
             var httpContent = JsonConvert.SerializeObject(orderCreateDto);
             StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);

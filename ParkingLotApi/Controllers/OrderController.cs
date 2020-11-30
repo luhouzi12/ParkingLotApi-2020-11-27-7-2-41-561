@@ -34,7 +34,7 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderCreateDto>> CreateOrder(OrderCreateDto orderCreateDto)
+        public async Task<ActionResult<string>> CreateOrder(OrderCreateDto orderCreateDto)
         {
             if (!await orderService.CanPark(orderCreateDto.ParkingLotName))
             {
@@ -42,7 +42,7 @@ namespace ParkingLotApi.Controllers
             }
 
             var number = await orderService.AddOrder(orderCreateDto);
-            return CreatedAtAction(nameof(GetByNumber), new { number = number }, orderCreateDto);
+            return CreatedAtAction(nameof(GetByNumber), new { number }, number);
         }
 
         [HttpPatch("{orderPatchDto.OrderNumber}")]
